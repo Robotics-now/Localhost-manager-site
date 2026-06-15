@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Localhost Manager Pro</title>
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --bg:        #0d1117;
+      --bg-card:   #161b22;
+      --bg-raised: #1c2128;
+      --border:    #30363d;
+      --text:      #e6edf3;
+      --muted:     #7d8590;
+      --accent:    #4fc3f7;
+      --accent-dim:#1e4f6b;
+      --green:     #3fb950;
+      --red:       #f85149;
+      --mono:      'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --sans:      'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 56px;
+      background: rgba(13,17,23,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; font-size: 15px; color: var(--text);
+    }
+    .nav-brand svg { color: var(--accent); }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-cta {
+      background: var(--accent); color: #0d1117 !important;
+      padding: 6px 16px; border-radius: 6px;
+      font-weight: 600; font-size: 13px;
+      transition: opacity 0.15s;
+    }
+    .nav-cta:hover { opacity: 0.85; text-decoration: none !important; }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 100px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Subtle grid background */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.35;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 40%, transparent 100%);
+    }
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 6vw, 72px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero-sub {
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 40px;
+      position: relative;
+    }
+    .hero-actions {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      justify-content: center; margin-bottom: 64px;
+      position: relative;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #0d1117;
+      padding: 12px 24px; border-radius: 8px;
+      font-weight: 700; font-size: 15px;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); text-decoration: none; }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--bg-card); color: var(--text);
+      padding: 12px 24px; border-radius: 8px;
+      font-weight: 600; font-size: 15px;
+      border: 1px solid var(--border);
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); transform: translateY(-1px); text-decoration: none; }
+
+    /* ── Animated scanner terminal ── */
+    .scanner-terminal {
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      text-align: left;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+    .terminal-bar {
+      display: flex; align-items: center; gap: 6px;
+      padding: 10px 14px;
+      background: var(--bg-raised);
+      border-bottom: 1px solid var(--border);
+    }
+    .terminal-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+    }
+    .td-red   { background: #ff5f56; }
+    .td-yellow{ background: #ffbd2e; }
+    .td-green { background: #27c93f; }
+    .terminal-title {
+      flex: 1; text-align: center;
+      font-family: var(--mono); font-size: 11px; color: var(--muted);
+    }
+    .terminal-body {
+      padding: 16px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.8;
+      min-height: 220px;
+    }
+    .t-line { display: flex; align-items: center; gap: 8px; }
+    .t-prompt { color: var(--accent); }
+    .t-scanning { color: var(--muted); }
+    .t-found { color: var(--green); }
+    .t-port { color: var(--accent); font-weight: 600; }
+    .t-inactive { color: #444d56; }
+    .t-cursor {
+      display: inline-block; width: 7px; height: 13px;
+      background: var(--accent); margin-left: 2px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── Stats strip ── */
+    .stats-strip {
+      display: flex; justify-content: center; gap: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+    .stat-item {
+      flex: 1; max-width: 200px;
+      padding: 28px 20px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      display: block;
+      font-family: var(--mono);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label { font-size: 12px; color: var(--muted); }
+
+    /* ── Sections ── */
+    section { padding: 96px 24px; }
+    .container { max-width: 1080px; margin: 0 auto; }
+    .section-eyebrow {
+      font-family: var(--mono); font-size: 11px;
+      color: var(--accent); letter-spacing: 0.12em;
+      text-transform: uppercase; margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700; letter-spacing: -0.02em;
+      margin-bottom: 16px; line-height: 1.15;
+    }
+    .section-sub {
+      font-size: 17px; color: var(--muted);
+      max-width: 520px; margin-bottom: 56px;
+    }
+
+    /* ── Features grid ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      padding: 28px;
+      transition: background 0.15s;
+    }
+    .feature-card:hover { background: var(--bg-raised); }
+    .feature-icon {
+      width: 40px; height: 40px;
+      background: var(--accent-dim);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .feature-title {
+      font-size: 15px; font-weight: 600;
+      margin-bottom: 8px; color: var(--text);
+    }
+    .feature-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── How it works ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 24px;
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: var(--mono);
+      font-size: 13px; font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-dim);
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .step-title { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+    .step-desc { font-size: 14px; color: var(--muted); line-height: 1.65; }
+    .step-code {
+      margin-top: 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--accent);
+      display: inline-block;
+    }
+
+    /* ── API / Connection points ── */
+    .api-grid {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .api-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .api-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-raised);
+    }
+    .api-method {
+      font-family: var(--mono); font-size: 12px;
+      font-weight: 700; padding: 3px 8px;
+      border-radius: 4px; flex-shrink: 0;
+    }
+    .method-get  { background: #1b4332; color: #3fb950; }
+    .method-post { background: #1e3a5f; color: #4fc3f7; }
+    .api-path {
+      font-family: var(--mono); font-size: 13px;
+      color: var(--text); flex: 1;
+    }
+    .api-desc-short { font-size: 13px; color: var(--muted); }
+    .api-body { padding: 16px 18px; }
+    .api-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted); margin-bottom: 8px; margin-top: 14px;
+    }
+    .api-label:first-child { margin-top: 0; }
+    pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.7;
+      overflow-x: auto;
+      color: var(--text);
+    }
+    .json-key   { color: #79c0ff; }
+    .json-str   { color: #a5d6ff; }
+    .json-num   { color: #f2cc60; }
+    .json-bool  { color: #ff7b72; }
+
+    /* ── Settings showcase ── */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .setting-showcase {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    .setting-showcase-icon {
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .setting-showcase-title {
+      font-size: 14px; font-weight: 600; margin-bottom: 4px;
+    }
+    .setting-showcase-desc {
+      font-size: 13px; color: var(--muted); line-height: 1.5;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .footer-inner {
+      max-width: 1080px; margin: 0 auto;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 16px;
+    }
+    .footer-brand {
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 600; font-size: 14px; color: var(--text);
+    }
+    .footer-brand svg { color: var(--accent); }
+    .footer-links {
+      display: flex; gap: 24px; flex-wrap: wrap; justify-content: center;
+    }
+    .footer-links a { font-size: 13px; color: var(--muted); }
+    .footer-links a:hover { color: var(--text); text-decoration: none; }
+    .footer-copy { font-size: 12px; color: var(--muted); }
+
+    /* ── Developer card ── */
+    .dev-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 8px 16px 8px 8px;
+      text-decoration: none;
+      transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+      color: var(--text);
+    }
+    .dev-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(79,195,247,0.12);
+      text-decoration: none;
+    }
+    .dev-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+    .dev-info {
+      display: flex; flex-direction: column;
+      gap: 1px;
+    }
+    .dev-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+    .dev-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .dev-github-icon {
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    .dev-card:hover .dev-github-icon { color: var(--accent); }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      nav { padding: 0 16px; }
+      .nav-links { display: none; }
+      section { padding: 64px 16px; }
+      .stats-strip { flex-wrap: wrap; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat-item:last-child { border-bottom: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <div class="nav-brand">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/>
+      <path d="M8 21h8M12 17v4"/>
+    </svg>
+    Localhost Manager Pro
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#setup">Setup</a>
+    <a href="#api">API</a>
+    <a href="#settings">Settings</a>
+    <a href="#install" class="nav-cta">Install</a>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <p class="hero-eyebrow">Chrome Extension · v1.7 · Free &amp; Open</p>
+  <h1>Your localhost,<br><span>under control.</span></h1>
+  <p class="hero-sub">Monitor every active port, host HTML files on a real server, and scan your local network — all from a single extension popup.</p>
+  <div class="hero-actions">
+    <a href="#install" class="btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Add to Chrome
+    </a>
+    <a href="https://github.com/Robotics-now/Localhost-Manager" target="_blank" rel="noopener" class="btn-secondary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16,18 22,12 16,6"/><polyline points="8,6 2,12 8,18"/></svg>
+      View source
+    </a>
+  </div>
+
+  <!-- Animated terminal -->
+  <div class="scanner-terminal">
+    <div class="terminal-bar">
+      <span class="terminal-dot td-red"></span>
+      <span class="terminal-dot td-yellow"></span>
+      <span class="terminal-dot td-green"></span>
+      <span class="terminal-title">Localhost Manager Pro</span>
+    </div>
+    <div class="terminal-body" id="terminal"></div>
+  </div>
+</section>
+
+<!-- ── Stats ── -->
+<div class="stats-strip">
+  <div class="stat-item">
+    <span class="stat-num">65k</span>
+    <span class="stat-label">ports scanned in auto mode</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">&lt;1s</span>
+    <span class="stat-label">popup open time from cache</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">1</span>
+    <span class="stat-label">dependency (Node.js server.js)</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">MV3</span>
+    <span class="stat-label">Manifest V3 compliant</span>
+  </div>
+</div>
+
+<!-- ── Features ── -->
+<section id="features">
+  <div class="container">
+    <p class="section-eyebrow">Features</p>
+    <h2 class="section-title">Everything a dev needs.<br>Nothing they don't.</h2>
+    <p class="section-sub">Built for the kind of developer who has five servers running and can't remember which port is which.</p>
+
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
+        </div>
+        <div class="feature-title">Auto port discovery</div>
+        <div class="feature-desc">Scans all 65,535 ports in parallel batches. Results are cached for up to 24 hours — configurable — so your popup opens in under a second on repeat visits.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        </div>
+        <div class="feature-title">Real HTML hosting</div>
+        <div class="feature-desc">Drop an HTML file and it spins up a real <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">http.createServer</code> on a free port via the companion Node.js control server. Not a blob URL — a proper localhost address.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div class="feature-title">Network scan</div>
+        <div class="feature-desc">Optionally scan devices on your local network (192.168.x.x) across common ports. Discover what's running on your router, NAS, or other machines without leaving the browser.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div class="feature-title">Smart caching</div>
+        <div class="feature-desc">Auto scan results are stored in extension storage with a configurable TTL (30 min to 24 hr). Inactive ports are pruned automatically. Force a fresh scan any time with Rescan.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="feature-title">Swipe to remove</div>
+        <div class="feature-desc">Drag any port row left to reveal a delete button. Works in both list and grid view. No accidental deletions — swipe right or click away to cancel.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+        </div>
+        <div class="feature-title">Light, dark &amp; auto theme</div>
+        <div class="feature-desc">Follows your system appearance by default. Switch to forced light or dark in settings. Preference is persisted across sessions.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        </div>
+        <div class="feature-title">Live status dots</div>
+        <div class="feature-desc">Green dot = active. Gray dot = known but offline. Blue dot = hosted by the extension. Red pulsing dot = error. At a glance, you always know what's up.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="1" width="9" height="9" rx="1"/><rect x="14" y="1" width="9" height="9" rx="1"/><rect x="1" y="14" width="9" height="9" rx="1"/><rect x="14" y="14" width="9" height="9" rx="1"/></svg>
+        </div>
+        <div class="feature-title">List &amp; grid views</div>
+        <div class="feature-desc">Toggle between a detailed list view (title, URL) and a compact icon grid. View preference is saved and restored per session.</div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="feature-title">Open API contract</div>
+        <div class="feature-desc">The control server speaks plain JSON over HTTP. Three endpoints. Bring your own server in Python, Go, Rust — anything that can bind a TCP port and respond to POST requests.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Setup ── -->
+<section id="setup" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <p class="section-eyebrow">Setup</p>
+    <h2 class="section-title">Running in two minutes.</h2>
+    <p class="section-sub">No build step, no package manager for the extension itself. Just load and go.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Load the extension</div>
+          <div class="step-desc">Go to <code style="font-family:var(--mono);font-size:13px;color:var(--accent)">chrome://extensions</code>, enable Developer Mode, click "Load unpacked", and select the extension folder. Note the extension ID shown on the card.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">Start the control server</div>
+          <div class="step-desc">The control server is what lets the extension host real HTML files on actual localhost ports. Run it once and leave the terminal open. Requires Node.js — no npm install needed.</div>
+          <div class="step-code">node server.js</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">Click the extension icon</div>
+          <div class="step-desc">The popup scans your known ports immediately. Active services appear with a green dot. Click any row to open it in a new tab. Drag left to remove a port from the list.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">Optional: enable Auto Scan</div>
+          <div class="step-desc">Open Settings (gear icon) and toggle Auto Scan on. The extension will probe all 65,535 ports, cache the results, and only re-scan after your chosen interval — down to 30 minutes, up to 24 hours.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── API ── -->
+<section id="api">
+  <div class="container">
+    <p class="section-eyebrow">API</p>
+    <h2 class="section-title">Build your own server.</h2>
+    <p class="section-sub">The extension talks to the control server over plain HTTP. Implement these three endpoints in any language and it just works.</p>
+
+    <div style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:28px;">
+      Base URL: <span style="color:var(--accent)">http://127.0.0.1:8765</span>
+      &nbsp;&nbsp;·&nbsp;&nbsp;
+      All responses: <span style="color:var(--accent)">Content-Type: application/json</span>
+      &nbsp;&nbsp;·&nbsp;&nbsp;
+      CORS required on all endpoints
+    </div>
+
+    <div class="api-grid">
+
+      <!-- GET /status -->
+      <div class="api-card">
+        <div class="api-header">
+          <span class="api-method method-get">GET</span>
+          <span class="api-path">/status</span>
+          <span class="api-desc-short">Health check &amp; active port list</span>
+        </div>
+        <div class="api-body">
+          <div class="api-label">Response</div>
+          <pre><span class="json-key">"ok"</span>: <span class="json-bool">true</span>,
+<span class="json-key">"activePorts"</span>: [<span class="json-num">9000</span>, <span class="json-num">9001</span>]</pre>
+        </div>
+      </div>
+
+      <!-- POST /start -->
+      <div class="api-card">
+        <div class="api-header">
+          <span class="api-method method-post">POST</span>
+          <span class="api-path">/start</span>
+          <span class="api-desc-short">Serve an HTML file on a given port</span>
+        </div>
+        <div class="api-body">
+          <div class="api-label">Request body</div>
+          <pre><span class="json-key">"port"</span>: <span class="json-num">9000</span>,
+<span class="json-key">"content"</span>: <span class="json-str">"&lt;html&gt;...&lt;/html&gt;"</span></pre>
+          <div class="api-label">Response · success</div>
+          <pre><span class="json-key">"ok"</span>: <span class="json-bool">true</span>,
+<span class="json-key">"port"</span>: <span class="json-num">9000</span>,
+<span class="json-key">"message"</span>: <span class="json-str">"Serving on http://localhost:9000"</span></pre>
+          <div class="api-label">Response · failure</div>
+          <pre><span class="json-key">"ok"</span>: <span class="json-bool">false</span>,
+<span class="json-key">"error"</span>: <span class="json-str">"Could not bind port 9000: address in use"</span></pre>
+        </div>
+      </div>
+
+      <!-- POST /stop -->
+      <div class="api-card">
+        <div class="api-header">
+          <span class="api-method method-post">POST</span>
+          <span class="api-path">/stop</span>
+          <span class="api-desc-short">Shut down a hosted server</span>
+        </div>
+        <div class="api-body">
+          <div class="api-label">Request body</div>
+          <pre><span class="json-key">"port"</span>: <span class="json-num">9000</span></pre>
+          <div class="api-label">Response · success</div>
+          <pre><span class="json-key">"ok"</span>: <span class="json-bool">true</span>,
+<span class="json-key">"port"</span>: <span class="json-num">9000</span>,
+<span class="json-key">"message"</span>: <span class="json-str">"Stopped server on port 9000"</span></pre>
+          <div class="api-label">Response · failure</div>
+          <pre><span class="json-key">"ok"</span>: <span class="json-bool">false</span>,
+<span class="json-key">"error"</span>: <span class="json-str">"No server running on port 9000"</span></pre>
+        </div>
+      </div>
+
+      <!-- CORS note -->
+      <div class="api-card">
+        <div class="api-header">
+          <span class="api-method method-post" style="background:#2d1f3d;color:#c9a7f0">HDR</span>
+          <span class="api-path">Required CORS headers</span>
+          <span class="api-desc-short">Must be present on every response</span>
+        </div>
+        <div class="api-body">
+          <pre>Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Headers: Content-Type</pre>
+          <div class="api-label" style="margin-top:14px">Preflight</div>
+          <pre>OPTIONS * → 204 No Content</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Settings ── -->
+<section id="settings" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <p class="section-eyebrow">Settings</p>
+    <h2 class="section-title">Configurable to your workflow.</h2>
+    <p class="section-sub">Open settings from the gear icon in the popup. Changes apply immediately — no reload needed.</p>
+
+    <div class="settings-grid">
+
+      <div class="setting-showcase">
+        <div class="setting-showcase-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="5"/><path d="M12 1v3M12 20v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M1 12h3M20 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+        </div>
+        <div class="setting-showcase-title">Theme</div>
+        <div class="setting-showcase-desc">Light, dark, or auto (follows system). Segmented control — one tap to switch.</div>
+      </div>
+
+      <div class="setting-showcase">
+        <div class="setting-showcase-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </div>
+        <div class="setting-showcase-title">Grid view</div>
+        <div class="setting-showcase-desc">Toggle between a detailed list and a compact icon grid. Saved across sessions.</div>
+      </div>
+
+      <div class="setting-showcase">
+        <div class="setting-showcase-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+        </div>
+        <div class="setting-showcase-title">Auto scan</div>
+        <div class="setting-showcase-desc">Discover all active ports automatically. Inactive ports are removed. Results cached per your chosen interval.</div>
+      </div>
+
+      <div class="setting-showcase">
+        <div class="setting-showcase-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="setting-showcase-title">Scan interval</div>
+        <div class="setting-showcase-desc">Slider from 30 min to 24 hr in 1-hour steps. Grayed out until Auto scan is enabled.</div>
+      </div>
+
+      <div class="setting-showcase">
+        <div class="setting-showcase-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div class="setting-showcase-title">Local network scan</div>
+        <div class="setting-showcase-desc">Scan 192.168.x.x devices on common ports. Configure the IP base range. Results appear below the localhost list.</div>
+      </div>
+
+      <div class="setting-showcase">
+        <div class="setting-showcase-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        </div>
+        <div class="setting-showcase-title">Control server status</div>
+        <div class="setting-showcase-desc">Settings shows whether the Node.js control server is online and how many ports it's currently hosting.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Install ── -->
+<section id="install">
+  <div class="container" style="text-align:center">
+    <p class="section-eyebrow">Install</p>
+    <h2 class="section-title">Get started now.</h2>
+    <p class="section-sub" style="margin: 0 auto 40px;">Load it unpacked in Chrome in under two minutes. No Chrome Web Store account required.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;">
+      <a href="https://github.com/Robotics-now/Localhost-Manager/releases/" target="_blank" rel="noopener" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download extension
+      </a>
+      <a href="#setup" class="btn-secondary">Read setup guide</a>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:12px 20px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>
+      <span style="font-size:13px;color:var(--muted)">Works on Chrome · Edge · Brave · any Chromium browser</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <rect x="2" y="3" width="20" height="14" rx="2"/>
+        <path d="M8 21h8M12 17v4"/>
+      </svg>
+      Localhost Manager Pro
+    </div>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#setup">Setup</a>
+      <a href="#api">API</a>
+      <a href="#settings">Settings</a>
+      <a href="https://github.com/Robotics-now/Localhost-Manager" target="_blank" rel="noopener">Source</a>
+      <a href="https://github.com/Robotics-now/Localhost-Manager/releases/" target="_blank" rel="noopener">Releases</a>
+    </div>
+
+    <!-- Developer card -->
+    <a href="https://github.com/Robotics-now" target="_blank" rel="noopener" class="dev-card">
+      <img
+        src="https://github.com/Robotics-now/robotics-now/blob/main/assets/Logo_new.png?raw=true"
+        alt="Robotics-now profile picture"
+        class="dev-avatar"
+        onerror="this.style.display='none'"
+      >
+      <div class="dev-info">
+        <span class="dev-label">Developed by</span>
+        <span class="dev-name">Robotics-now</span>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="dev-github-icon">
+        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+    </a>
+
+    <div class="footer-copy">v1.7 · MIT License · Built for developers who run too many servers</div>
+  </div>
+</footer>
+
+<script>
+  // ── Animated terminal ──
+  const SCAN_LINES = [
+    { type: 'prompt', text: 'Scanning localhost ports…' },
+    { type: 'inactive', text: '✗  :3000  no response' },
+    { type: 'found',    text: '✓  :5000  React App', port: '5000' },
+    { type: 'inactive', text: '✗  :5173  no response' },
+    { type: 'found',    text: '✓  :8000  Django · OPEN API', port: '8000' },
+    { type: 'inactive', text: '✗  :8080  no response' },
+    { type: 'found',    text: '✓  :9000  Hosted · index.html', port: '9000' },
+    { type: 'done',     text: '3 active services found.' },
+  ];
+
+  const terminal = document.getElementById('terminal');
+  let lineIndex = 0;
+
+  function addLine() {
+    if (lineIndex >= SCAN_LINES.length) {
+      // Pause then restart
+      setTimeout(() => {
+        terminal.innerHTML = '';
+        lineIndex = 0;
+        setTimeout(addLine, 400);
+      }, 3000);
+      return;
+    }
+
+    const entry = SCAN_LINES[lineIndex++];
+    const line = document.createElement('div');
+    line.className = 't-line';
+
+    if (entry.type === 'prompt') {
+      line.innerHTML = `<span class="t-prompt">›</span><span class="t-scanning">${entry.text}</span>`;
+    } else if (entry.type === 'found') {
+      line.innerHTML = `<span class="t-found">✓</span><span class="t-scanning">&nbsp; :<span class="t-port">${entry.port}</span>&nbsp;&nbsp;${entry.text.split('  ').slice(1).join('  ')}</span>`;
+    } else if (entry.type === 'inactive') {
+      line.innerHTML = `<span class="t-inactive">${entry.text}</span>`;
+    } else if (entry.type === 'done') {
+      line.innerHTML = `<span class="t-prompt">›</span><span class="t-found">&nbsp;${entry.text}</span>`;
+    }
+
+    terminal.appendChild(line);
+    terminal.scrollTop = terminal.scrollHeight;
+
+    const delay = entry.type === 'inactive' ? 180 : entry.type === 'found' ? 320 : 600;
+    setTimeout(addLine, delay);
+  }
+
+  setTimeout(addLine, 600);
+
+  // ── Nav scroll highlight ──
+  const sections = document.querySelectorAll('section[id], div[id]');
+  const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => {
+          a.style.color = a.getAttribute('href') === '#' + e.target.id
+            ? 'var(--text)' : '';
+        });
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(s => obs.observe(s));
+</script>
+
+</body>
+</html>
