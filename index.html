@@ -70,7 +70,6 @@
       position: relative;
       overflow: hidden;
     }
-    /* Subtle grid background */
     .hero::before {
       content: '';
       position: absolute; inset: 0;
@@ -148,9 +147,7 @@
       background: var(--bg-raised);
       border-bottom: 1px solid var(--border);
     }
-    .terminal-dot {
-      width: 10px; height: 10px; border-radius: 50%;
-    }
+    .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
     .td-red   { background: #ff5f56; }
     .td-yellow{ background: #ffbd2e; }
     .td-green { background: #27c93f; }
@@ -171,11 +168,7 @@
     .t-found { color: var(--green); }
     .t-port { color: var(--accent); font-weight: 600; }
     .t-inactive { color: #444d56; }
-    .t-cursor {
-      display: inline-block; width: 7px; height: 13px;
-      background: var(--accent); margin-left: 2px;
-      animation: blink 1s step-end infinite;
-    }
+    .t-latency { color: var(--muted); font-size: 11px; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
     /* ── Stats strip ── */
@@ -231,11 +224,7 @@
       border-radius: 12px;
       overflow: hidden;
     }
-    .feature-card {
-      background: var(--bg-card);
-      padding: 28px;
-      transition: background 0.15s;
-    }
+    .feature-card { background: var(--bg-card); padding: 28px; transition: background 0.15s; }
     .feature-card:hover { background: var(--bg-raised); }
     .feature-icon {
       width: 40px; height: 40px;
@@ -248,8 +237,20 @@
     .feature-title {
       font-size: 15px; font-weight: 600;
       margin-bottom: 8px; color: var(--text);
+      display: flex; align-items: center; gap: 8px;
     }
     .feature-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .feature-new-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: #0d1117;
+      background: var(--green);
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
 
     /* ── How it works ── */
     .steps { display: flex; flex-direction: column; gap: 0; }
@@ -288,9 +289,7 @@
     }
 
     /* ── API / Connection points ── */
-    .api-grid {
-      display: flex; flex-direction: column; gap: 12px;
-    }
+    .api-grid { display: flex; flex-direction: column; gap: 12px; }
     .api-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -310,10 +309,7 @@
     }
     .method-get  { background: #1b4332; color: #3fb950; }
     .method-post { background: #1e3a5f; color: #4fc3f7; }
-    .api-path {
-      font-family: var(--mono); font-size: 13px;
-      color: var(--text); flex: 1;
-    }
+    .api-path { font-family: var(--mono); font-size: 13px; color: var(--text); flex: 1; }
     .api-desc-short { font-size: 13px; color: var(--muted); }
     .api-body { padding: 16px 18px; }
     .api-label {
@@ -350,23 +346,18 @@
       border-radius: 10px;
       padding: 20px;
     }
-    .setting-showcase-icon {
-      color: var(--accent);
-      margin-bottom: 12px;
-    }
+    .setting-showcase-icon { color: var(--accent); margin-bottom: 12px; }
     .setting-showcase-title {
       font-size: 14px; font-weight: 600; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 8px;
     }
-    .setting-showcase-desc {
-      font-size: 13px; color: var(--muted); line-height: 1.5;
-    }
+    .setting-showcase-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    .swatch-preview-row { display: flex; gap: 6px; margin-top: 10px; }
+    .swatch-preview { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
 
     /* ── Footer ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 40px 24px;
-      text-align: center;
-    }
+    footer { border-top: 1px solid var(--border); padding: 40px 24px; text-align: center; }
     .footer-inner {
       max-width: 1080px; margin: 0 auto;
       display: flex; flex-direction: column;
@@ -377,9 +368,7 @@
       font-weight: 600; font-size: 14px; color: var(--text);
     }
     .footer-brand svg { color: var(--accent); }
-    .footer-links {
-      display: flex; gap: 24px; flex-wrap: wrap; justify-content: center;
-    }
+    .footer-links { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
     .footer-links a { font-size: 13px; color: var(--muted); }
     .footer-links a:hover { color: var(--text); text-decoration: none; }
     .footer-copy { font-size: 12px; color: var(--muted); }
@@ -403,34 +392,11 @@
       box-shadow: 0 8px 24px rgba(79,195,247,0.12);
       text-decoration: none;
     }
-    .dev-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--border);
-      flex-shrink: 0;
-    }
-    .dev-info {
-      display: flex; flex-direction: column;
-      gap: 1px;
-    }
-    .dev-label {
-      font-size: 10px;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 600;
-    }
-    .dev-name {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    .dev-github-icon {
-      color: var(--muted);
-      flex-shrink: 0;
-      transition: color 0.15s;
-    }
+    .dev-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border); flex-shrink: 0; }
+    .dev-info { display: flex; flex-direction: column; gap: 1px; }
+    .dev-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+    .dev-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .dev-github-icon { color: var(--muted); flex-shrink: 0; transition: color 0.15s; }
     .dev-card:hover .dev-github-icon { color: var(--accent); }
 
     /* ── Responsive ── */
@@ -470,7 +436,7 @@
 
 <!-- ── Hero ── -->
 <section class="hero">
-  <p class="hero-eyebrow">Chrome Extension · v1.7 · Free &amp; Open</p>
+  <p class="hero-eyebrow">Chrome Extension · <span class="js-version">v…</span> · Free &amp; Open</p>
   <h1>Your localhost,<br><span>under control.</span></h1>
   <p class="hero-sub">Monitor every active port, host HTML files on a real server, and scan your local network — all from a single extension popup.</p>
   <div class="hero-actions">
@@ -484,7 +450,6 @@
     </a>
   </div>
 
-  <!-- Animated terminal -->
   <div class="scanner-terminal">
     <div class="terminal-bar">
       <span class="terminal-dot td-red"></span>
@@ -597,6 +562,51 @@
         <div class="feature-desc">The control server speaks plain JSON over HTTP. Three endpoints. Bring your own server in Python, Go, Rust — anything that can bind a TCP port and respond to POST requests.</div>
       </div>
 
+      <!-- NEW: Latency -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+        </div>
+        <div class="feature-title">Latency readout <span class="feature-new-badge">New</span></div>
+        <div class="feature-desc">Every active port shows its response time in milliseconds, in small gray text right under the URL. Spot a slow dev server before it becomes a mystery.</div>
+      </div>
+
+      <!-- NEW: Pin ports -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a3 3 0 0 0-3 3v4.5L7 12v1h10v-1l-2-2.5V5a3 3 0 0 0-3-3z"/><line x1="12" y1="17" x2="12" y2="22"/></svg>
+        </div>
+        <div class="feature-title">Pin to top <span class="feature-new-badge">New</span></div>
+        <div class="feature-desc">Pin your most-used ports so they always float to the top of the list view. The pin icon outlines when unpinned, fills solid when pinned.</div>
+      </div>
+
+      <!-- NEW: Accent color -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <div class="feature-title">Accent color <span class="feature-new-badge">New</span></div>
+        <div class="feature-desc">macOS-style swatch picker in Settings — choose from 8 accent colors that recolor every button, link, and highlight across the popup and settings window.</div>
+      </div>
+
+      <!-- NEW: Toolbar badge -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor" stroke="none" font-family="sans-serif">3</text></svg>
+        </div>
+        <div class="feature-title">Toolbar badge <span class="feature-new-badge">New</span></div>
+        <div class="feature-desc">See your active port count directly on the extension icon — no need to open the popup. Flashes translucent red if the control server drops, and translucent green for 7 seconds when a new port comes online.</div>
+      </div>
+
+      <!-- NEW: Keyboard shortcut -->
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10" stroke-linecap="round"/></svg>
+        </div>
+        <div class="feature-title">Keyboard shortcut <span class="feature-new-badge">New</span></div>
+        <div class="feature-desc">Open the popup instantly with <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">⌘⇧L</code> / <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">Ctrl+Shift+L</code> by default. Customizable from Chrome's own shortcuts page, linked directly from Settings.</div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -628,7 +638,7 @@
         <div class="step-num">3</div>
         <div>
           <div class="step-title">Click the extension icon</div>
-          <div class="step-desc">The popup scans your known ports immediately. Active services appear with a green dot. Click any row to open it in a new tab. Drag left to remove a port from the list.</div>
+          <div class="step-desc">The popup scans your known ports immediately. Active services appear with a green dot and a latency reading. Click any row to open it in a new tab. Drag left to remove a port from the list.</div>
         </div>
       </div>
       <div class="step">
@@ -636,6 +646,13 @@
         <div>
           <div class="step-title">Optional: enable Auto Scan</div>
           <div class="step-desc">Open Settings (gear icon) and toggle Auto Scan on. The extension will probe all 65,535 ports, cache the results, and only re-scan after your chosen interval — down to 30 minutes, up to 24 hours.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div>
+          <div class="step-title">Make it yours</div>
+          <div class="step-desc">Pick an accent color, set a keyboard shortcut, and pin your most-used ports to the top — all from Settings.</div>
         </div>
       </div>
     </div>
@@ -659,7 +676,6 @@
 
     <div class="api-grid">
 
-      <!-- GET /status -->
       <div class="api-card">
         <div class="api-header">
           <span class="api-method method-get">GET</span>
@@ -673,7 +689,6 @@
         </div>
       </div>
 
-      <!-- POST /start -->
       <div class="api-card">
         <div class="api-header">
           <span class="api-method method-post">POST</span>
@@ -694,7 +709,6 @@
         </div>
       </div>
 
-      <!-- POST /stop -->
       <div class="api-card">
         <div class="api-header">
           <span class="api-method method-post">POST</span>
@@ -714,7 +728,6 @@
         </div>
       </div>
 
-      <!-- CORS note -->
       <div class="api-card">
         <div class="api-header">
           <span class="api-method method-post" style="background:#2d1f3d;color:#c9a7f0">HDR</span>
@@ -753,6 +766,24 @@ Access-Control-Allow-Headers: Content-Type</pre>
 
       <div class="setting-showcase">
         <div class="setting-showcase-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <div class="setting-showcase-title">Accent color <span class="feature-new-badge">New</span></div>
+        <div class="setting-showcase-desc">8 macOS-style swatches recolor buttons, links, and highlights across the whole extension.</div>
+        <div class="swatch-preview-row">
+          <span class="swatch-preview" style="background:#1a73e8"></span>
+          <span class="swatch-preview" style="background:#9333ea"></span>
+          <span class="swatch-preview" style="background:#e11d48"></span>
+          <span class="swatch-preview" style="background:#f97316"></span>
+          <span class="swatch-preview" style="background:#eab308"></span>
+          <span class="swatch-preview" style="background:#16a34a"></span>
+          <span class="swatch-preview" style="background:#0d9488"></span>
+          <span class="swatch-preview" style="background:#475569"></span>
+        </div>
+      </div>
+
+      <div class="setting-showcase">
+        <div class="setting-showcase-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         </div>
         <div class="setting-showcase-title">Grid view</div>
@@ -781,6 +812,22 @@ Access-Control-Allow-Headers: Content-Type</pre>
         </div>
         <div class="setting-showcase-title">Local network scan</div>
         <div class="setting-showcase-desc">Scan 192.168.x.x devices on common ports. Configure the IP base range. Results appear below the localhost list.</div>
+      </div>
+
+      <div class="setting-showcase">
+        <div class="setting-showcase-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10" stroke-linecap="round"/></svg>
+        </div>
+        <div class="setting-showcase-title">Keyboard shortcut <span class="feature-new-badge">New</span></div>
+        <div class="setting-showcase-desc">Default <code style="font-family:var(--mono);font-size:12px;color:var(--accent)">⌘⇧L</code>. Settings shows the live binding and links straight to Chrome's shortcut editor.</div>
+      </div>
+
+      <div class="setting-showcase">
+        <div class="setting-showcase-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="currentColor" stroke="none" font-family="sans-serif">3</text></svg>
+        </div>
+        <div class="setting-showcase-title">Toolbar badge <span class="feature-new-badge">New</span></div>
+        <div class="setting-showcase-desc">Active count on the icon. Adjustable red-flash duration (10 sec – 20 min) for when the control server drops.</div>
       </div>
 
       <div class="setting-showcase">
@@ -834,7 +881,6 @@ Access-Control-Allow-Headers: Content-Type</pre>
       <a href="https://github.com/Robotics-now/Localhost-Manager/releases/" target="_blank" rel="noopener">Releases</a>
     </div>
 
-    <!-- Developer card -->
     <a href="https://github.com/Robotics-now" target="_blank" rel="noopener" class="dev-card">
       <img
         src="https://github.com/Robotics-now/robotics-now/blob/main/assets/Logo_new.png?raw=true"
@@ -851,20 +897,34 @@ Access-Control-Allow-Headers: Content-Type</pre>
       </svg>
     </a>
 
-    <div class="footer-copy">v1.7 · MIT License · Built for developers who run too many servers</div>
+    <div class="footer-copy"><span class="js-version">v…</span> · MIT License · Built for developers who run too many servers</div>
   </div>
 </footer>
 
 <script>
+  // ── Version, loaded from version.json (single source of truth) ──
+  // Every element with class "js-version" gets its text filled in once the
+  // fetch resolves. If version.json is unreachable (e.g. opened via file://
+  // directly without a local server), the "v…" placeholder stays as a safe fallback.
+  fetch('version.json')
+    .then(res => res.json())
+    .then(data => {
+      const versionText = `v${data.version}`;
+      document.querySelectorAll('.js-version').forEach(el => {
+        el.textContent = versionText;
+      });
+    })
+    .catch(() => { /* keep placeholder */ });
+
   // ── Animated terminal ──
   const SCAN_LINES = [
     { type: 'prompt', text: 'Scanning localhost ports…' },
     { type: 'inactive', text: '✗  :3000  no response' },
-    { type: 'found',    text: '✓  :5000  React App', port: '5000' },
+    { type: 'found',    text: '✓  :5000  React App', port: '5000', latency: '4ms' },
     { type: 'inactive', text: '✗  :5173  no response' },
-    { type: 'found',    text: '✓  :8000  Django · OPEN API', port: '8000' },
+    { type: 'found',    text: '✓  :8000  Django API', port: '8000', latency: '11ms' },
     { type: 'inactive', text: '✗  :8080  no response' },
-    { type: 'found',    text: '✓  :9000  Hosted · index.html', port: '9000' },
+    { type: 'found',    text: '✓  :9000  Hosted · index.html', port: '9000', latency: '2ms' },
     { type: 'done',     text: '3 active services found.' },
   ];
 
@@ -873,7 +933,6 @@ Access-Control-Allow-Headers: Content-Type</pre>
 
   function addLine() {
     if (lineIndex >= SCAN_LINES.length) {
-      // Pause then restart
       setTimeout(() => {
         terminal.innerHTML = '';
         lineIndex = 0;
@@ -889,7 +948,8 @@ Access-Control-Allow-Headers: Content-Type</pre>
     if (entry.type === 'prompt') {
       line.innerHTML = `<span class="t-prompt">›</span><span class="t-scanning">${entry.text}</span>`;
     } else if (entry.type === 'found') {
-      line.innerHTML = `<span class="t-found">✓</span><span class="t-scanning">&nbsp; :<span class="t-port">${entry.port}</span>&nbsp;&nbsp;${entry.text.split('  ').slice(1).join('  ')}</span>`;
+      const rest = entry.text.split('  ').slice(1).join('  ');
+      line.innerHTML = `<span class="t-found">✓</span><span class="t-scanning">&nbsp; :<span class="t-port">${entry.port}</span>&nbsp;&nbsp;${rest}</span><span class="t-latency">&nbsp;${entry.latency}</span>`;
     } else if (entry.type === 'inactive') {
       line.innerHTML = `<span class="t-inactive">${entry.text}</span>`;
     } else if (entry.type === 'done') {
