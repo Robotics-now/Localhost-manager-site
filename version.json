@@ -2,4 +2,5 @@
   "name": "Localhost Manager",
   "version": "1.2",
   "icon": "https://github.com/Robotics-now/robotics-now/blob/main/assets/localhost_manager.png?raw=true"
+  "license": "GPL-3.0 License"
 }
