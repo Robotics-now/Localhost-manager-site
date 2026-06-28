@@ -891,7 +891,7 @@ Access-Control-Allow-Headers: Content-Type</pre>
       </svg>
     </a>
 
-    <div class="footer-copy"><span class="js-version">v…</span> · MIT License · Built for developers who run too many servers</div>
+    <div class="footer-copy"><span class="js-version">v…</span> · <span class="js-license">MIT License</span> · Built for developers who run too many servers</div>
   </div>
 </footer>
 
@@ -917,6 +917,11 @@ Access-Control-Allow-Headers: Content-Type</pre>
       if (data.icon) {
         document.querySelectorAll('.js-icon').forEach(el => {
           el.src = data.icon;
+        });
+      }
+      if (data.license) {
+        document.querySelectorAll('.js-license').forEach(el => {
+          el.textContent = data.license;
         });
       }
     })
