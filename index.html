@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Localhost Manager Pro</title>
+  <title>Localhost Manager</title>
   <style>
     /* ── Tokens ── */
     :root {
@@ -48,7 +48,7 @@
       display: flex; align-items: center; gap: 10px;
       font-weight: 600; font-size: 15px; color: var(--text);
     }
-    .nav-brand svg { color: var(--accent); }
+    .brand-icon { width: 22px; height: 22px; border-radius: 5px; flex-shrink: 0; }
     .nav-links { display: flex; align-items: center; gap: 28px; }
     .nav-links a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
     .nav-links a:hover { color: var(--text); text-decoration: none; }
@@ -367,7 +367,7 @@
       display: flex; align-items: center; gap: 8px;
       font-weight: 600; font-size: 14px; color: var(--text);
     }
-    .footer-brand svg { color: var(--accent); }
+    .footer-brand .brand-icon { border-radius: 5px; }
     .footer-links { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
     .footer-links a { font-size: 13px; color: var(--muted); }
     .footer-links a:hover { color: var(--text); text-decoration: none; }
@@ -419,11 +419,8 @@
 <!-- ── Navigation ── -->
 <nav>
   <div class="nav-brand">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-      <rect x="2" y="3" width="20" height="14" rx="2"/>
-      <path d="M8 21h8M12 17v4"/>
-    </svg>
-    Localhost Manager Pro
+    <img src="" alt="" class="brand-icon js-icon">
+    <span class="js-name">Localhost Manager</span>
   </div>
   <div class="nav-links">
     <a href="#features">Features</a>
@@ -455,7 +452,7 @@
       <span class="terminal-dot td-red"></span>
       <span class="terminal-dot td-yellow"></span>
       <span class="terminal-dot td-green"></span>
-      <span class="terminal-title">Localhost Manager Pro</span>
+      <span class="terminal-title js-name">Localhost Manager</span>
     </div>
     <div class="terminal-body" id="terminal"></div>
   </div>
@@ -866,11 +863,8 @@ Access-Control-Allow-Headers: Content-Type</pre>
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <rect x="2" y="3" width="20" height="14" rx="2"/>
-        <path d="M8 21h8M12 17v4"/>
-      </svg>
-      Localhost Manager Pro
+      <img src="" alt="" class="brand-icon js-icon">
+      <span class="js-name">Localhost Manager</span>
     </div>
     <div class="footer-links">
       <a href="#features">Features</a>
@@ -902,19 +896,31 @@ Access-Control-Allow-Headers: Content-Type</pre>
 </footer>
 
 <script>
-  // ── Version, loaded from version.json (single source of truth) ──
-  // Every element with class "js-version" gets its text filled in once the
-  // fetch resolves. If version.json is unreachable (e.g. opened via file://
-  // directly without a local server), the "v…" placeholder stays as a safe fallback.
+  // ── Name, version, and icon — loaded from version.json (single source of truth) ──
+  // Elements with class "js-name", "js-version", or "js-icon" get populated once
+  // the fetch resolves. If version.json is unreachable (e.g. opened via file://
+  // directly without a local server), placeholders/empty srcs stay as a safe fallback.
   fetch('version.json')
     .then(res => res.json())
     .then(data => {
-      const versionText = `v${data.version}`;
-      document.querySelectorAll('.js-version').forEach(el => {
-        el.textContent = versionText;
-      });
+      if (data.name) {
+        document.querySelectorAll('.js-name').forEach(el => {
+          el.textContent = data.name;
+        });
+      }
+      if (data.version) {
+        const versionText = `v${data.version}`;
+        document.querySelectorAll('.js-version').forEach(el => {
+          el.textContent = versionText;
+        });
+      }
+      if (data.icon) {
+        document.querySelectorAll('.js-icon').forEach(el => {
+          el.src = data.icon;
+        });
+      }
     })
-    .catch(() => { /* keep placeholder */ });
+    .catch(() => { /* keep placeholders */ });
 
   // ── Animated terminal ──
   const SCAN_LINES = [
